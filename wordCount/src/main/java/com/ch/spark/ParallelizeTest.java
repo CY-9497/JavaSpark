@@ -40,9 +40,29 @@ public class ParallelizeTest {
                 }
                 return list1.iterator();
             }
-        },false);
+        },true);
         List<String> collect = stringJavaRDD.collect();
         collect.forEach(System.out::println);
+
+//      repartition,是有shuffle的算子,可以对RDD重新分区,可以增加分区也可以减少分区
+//        JavaRDD<String> rdd1 = stringJavaRDD.repartition(4);
+
+//        coalesce和repartition一样可以对RDD重新分区,可以增加分区也可以减少分区
+//        coalesce(slice,shuffle[boolean = false] false不产生shuffle
+        JavaRDD<String> rdd1 = stringJavaRDD.coalesce(2);
+        JavaRDD<String> stringJavaRDD1 = rdd1.mapPartitionsWithIndex(new Function2<Integer, Iterator<String>, Iterator<String>>() {
+            @Override
+            public Iterator<String> call(Integer integer, Iterator<String> stringIterator) throws Exception {
+                List<String> list1 = new ArrayList<>();
+                while (stringIterator.hasNext()) {
+                    String one = stringIterator.next();
+                    list1.add("partition index = [" + integer + "],value = [" + one + "]");
+                }
+                return list1.iterator();
+            }
+        }, true);
+        List<String> collect1 = stringJavaRDD1.collect();
+        collect1.forEach(System.out::println);
 
         sc.stop();
     }
