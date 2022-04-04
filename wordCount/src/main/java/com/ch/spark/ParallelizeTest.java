@@ -1,8 +1,10 @@
 package com.ch.spark;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import scala.Tuple2;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,8 +14,15 @@ public class ParallelizeTest {
         SparkConf conf = new SparkConf().setMaster("local").setAppName("parallelizeTest");
         JavaSparkContext sc = new JavaSparkContext(conf);
         List<String> list = Arrays.asList("a", "b", "c", "d", "e");
+
+//        parallelize
         JavaRDD<String> rdd = sc.parallelize(list);
         System.out.println("rdd parallelize length:" + rdd.partitions().size());
+        List<Tuple2<String, Integer>> list1 = Arrays.asList(new Tuple2<String, Integer>("zhangSan", 1), new Tuple2<String, Integer>("liSi", 2), new Tuple2<String, Integer>("wanWu", 3));
+        List<Tuple2<String, String>> list2 = Arrays.asList(new Tuple2<String, String>("zhangSan", "1"), new Tuple2<String, String>("liSi", "2"), new Tuple2<String, String>("wanWu", "3"));
+//        JavaRDD<Tuple2<String, Integer>> rdd1 = sc.parallelize(list1);
+        JavaPairRDD<String, Integer> rdd2 = sc.parallelizePairs(list1);
+
         List<String> collect = rdd.collect();
         sc.stop();
     }
