@@ -1,29 +1,49 @@
 package com.ch.spark;
 
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import scala.Tuple2;
+import org.apache.spark.api.java.function.Function2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class ParallelizeTest {
     public static void main(String[] args) {
         SparkConf conf = new SparkConf().setMaster("local").setAppName("parallelizeTest");
         JavaSparkContext sc = new JavaSparkContext(conf);
-        List<String> list = Arrays.asList("a", "b", "c", "d", "e");
+        List<String> list = Arrays.asList(
+                "love1","love2","love3","love4",
+                "love5","love6","love7","love8",
+                "love9","love10","love11","love12","love13"
+        );
 
 //        parallelize
-        JavaRDD<String> rdd = sc.parallelize(list);
-        System.out.println("rdd parallelize length:" + rdd.partitions().size());
-        List<Tuple2<String, Integer>> list1 = Arrays.asList(new Tuple2<String, Integer>("zhangSan", 1), new Tuple2<String, Integer>("liSi", 2), new Tuple2<String, Integer>("wanWu", 3));
-        List<Tuple2<String, String>> list2 = Arrays.asList(new Tuple2<String, String>("zhangSan", "1"), new Tuple2<String, String>("liSi", "2"), new Tuple2<String, String>("wanWu", "3"));
+//        JavaRDD<String> rdd = sc.parallelize(list);
+//        System.out.println("rdd parallelize length:" + rdd.partitions().size());
+//        List<Tuple2<String, Integer>> list1 = Arrays.asList(new Tuple2<String, Integer>("zhangSan", 1), new Tuple2<String, Integer>("liSi", 2), new Tuple2<String, Integer>("wanWu", 3));
+//        List<Tuple2<String, String>> list2 = Arrays.asList(new Tuple2<String, String>("zhangSan", "1"), new Tuple2<String, String>("liSi", "2"), new Tuple2<String, String>("wanWu", "3"));
 //        JavaRDD<Tuple2<String, Integer>> rdd1 = sc.parallelize(list1);
-        JavaPairRDD<String, Integer> rdd2 = sc.parallelizePairs(list1);
+//        JavaPairRDD<String, Integer> rdd2 = sc.parallelizePairs(list1);
 
-        List<String> collect = rdd.collect();
+//        List<String> collect = rdd.collect();
+        JavaRDD<String> rdd = sc.parallelize(list,3);
+        JavaRDD<String> stringJavaRDD = rdd.mapPartitionsWithIndex(new Function2<Integer, Iterator<String>, Iterator<String>>() {
+            @Override
+            public Iterator<String> call(Integer integer, Iterator<String> stringIterator) throws Exception {
+                List<String> list1 = new ArrayList<>();
+                while (stringIterator.hasNext()) {
+                    String one = stringIterator.next();
+                    list1.add("partition index = [" + integer + "],value = [" + one + "]");
+                }
+                return list1.iterator();
+            }
+        },false);
+        List<String> collect = stringJavaRDD.collect();
+        collect.forEach(System.out::println);
+
         sc.stop();
     }
 }
