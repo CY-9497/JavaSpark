@@ -7,6 +7,7 @@ import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SaveMode;
 
 /**
  * @author 渔郎
@@ -24,7 +25,14 @@ public class SqlTest {
         Dataset<Row> df = sqlContext.read().format("json").load("./json");
         df.show();
         df.printSchema();
+        //保存为parquet有以下两种方式
+//        df.write().mode(SaveMode.Overwrite).format("parquet").save("./parquet");
+        df.write().mode(SaveMode.Ignore).parquet("./parquet");
 
+//        加载parquet文件成Dataframe有两种方式
+//        Dataset<Row> parquet = sqlContext.read().format("parquet").load("./parquet");
+        Dataset<Row> parquet = sqlContext.read().parquet("./parquet");
+        parquet.show();
         JavaRDD<Row> df1 = df.javaRDD();
         df1.foreach(new VoidFunction<Row>() {
             @Override
