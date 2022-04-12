@@ -12,7 +12,9 @@ import java.util.List;
 
 public class ParallelizeTest {
     public static void main(String[] args) {
-        SparkConf conf = new SparkConf().setMaster("local").setAppName("parallelizeTest");
+        SparkConf conf = new SparkConf();
+        conf.setMaster("local");
+        conf.setAppName("parallelizeTest");
         JavaSparkContext sc = new JavaSparkContext(conf);
         List<String> list = Arrays.asList(
                 "love1","love2","love3","love4",
