@@ -27,7 +27,7 @@ public class CreateDfFromMySql {
         map.put("url","jdbc:mysql://192.168.100.128:3306/spark");
         map.put("driver","com.mysql.jdbc.Driver");
         map.put("user","root");
-        map.put("password","Cy715809.");
+        map.put("password","123456");
         map.put("dbtable","user");
 
         Dataset<Row> person = sqlContext.read().format("jdbc").options(map).load();
@@ -42,7 +42,7 @@ public class CreateDfFromMySql {
 //        jdbc.option("url","jdbc:mysql://192.168.100.128:3306/spark");
 //        jdbc.option("driver","com.mysql.jdbc.Driver");
 //        jdbc.option("user","root");
-//        jdbc.option("password","Cy715809.");
+//        jdbc.option("password","123456");
 //        jdbc.option("dbtable","score");
 //        Dataset<Row> load = jdbc.load();
 //        load.show();
