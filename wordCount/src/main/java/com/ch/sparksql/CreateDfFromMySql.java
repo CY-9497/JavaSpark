@@ -5,6 +5,8 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.api.java.UDF1;
+import org.apache.spark.sql.types.DataTypes;
 
 import java.util.HashMap;
 
@@ -34,8 +36,15 @@ public class CreateDfFromMySql {
 
         person.show();
         person.registerTempTable("user1");
+
+        sqlContext.udf().register("strLen", new UDF1<String, Integer>() {
+            @Override
+            public Integer call(String s) throws Exception {
+                return s.length();
+            }
+        },DataTypes.IntegerType);
         //map.put("dbtable","score")
-        Dataset<Row> sql = sqlContext.sql("select * from user1");
+        Dataset<Row> sql = sqlContext.sql("select name,strLen(name) as length from user1");
         sql.show();
         //第二种方式
 //        DataFrameReader jdbc = sqlContext.read().format("jdbc");
