@@ -22,6 +22,7 @@ public class CreateDfFromMySql {
         conf.set("spark.sql.shuffle.partitions", "1");
         JavaSparkContext sc = new JavaSparkContext(conf);
         SQLContext sqlContext = new SQLContext(sc);
+        //第一种方式读取mysql表数据
         HashMap<String, String> map = new HashMap<>();
         map.put("url","jdbc:mysql://192.168.100.128:3306/spark");
         map.put("driver","com.mysql.jdbc.Driver");
@@ -30,10 +31,22 @@ public class CreateDfFromMySql {
         map.put("dbtable","user");
 
         Dataset<Row> person = sqlContext.read().format("jdbc").options(map).load();
+
         person.show();
         person.registerTempTable("user1");
+        //map.put("dbtable","score")
         Dataset<Row> sql = sqlContext.sql("select * from user1");
         sql.show();
+        //第二种方式
+//        DataFrameReader jdbc = sqlContext.read().format("jdbc");
+//        jdbc.option("url","jdbc:mysql://192.168.100.128:3306/spark");
+//        jdbc.option("driver","com.mysql.jdbc.Driver");
+//        jdbc.option("user","root");
+//        jdbc.option("password","Cy715809.");
+//        jdbc.option("dbtable","score");
+//        Dataset<Row> load = jdbc.load();
+//        load.show();
+
         sc.stop();
     }
 }
