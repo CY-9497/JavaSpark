@@ -56,6 +56,7 @@ public class CreateDfFromMySql {
 //        jdbc.option("dbtable","score");
 //        Dataset<Row> load = jdbc.load();
 //        load.show();
+
 //        load.registerTempTable("score1");
 //        将Dataframe两个表合并的结果存入mysql
 //        Properties properties = new Properties();
