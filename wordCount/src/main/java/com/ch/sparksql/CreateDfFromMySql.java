@@ -46,6 +46,7 @@ public class CreateDfFromMySql {
         //map.put("dbtable","score")
         Dataset<Row> sql = sqlContext.sql("select name,strLen(name) as length from user1");
         sql.show();
+
         //第二种方式
 //        DataFrameReader jdbc = sqlContext.read().format("jdbc");
 //        jdbc.option("url","jdbc:mysql://192.168.100.128:3306/spark");
