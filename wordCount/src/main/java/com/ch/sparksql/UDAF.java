@@ -87,6 +87,7 @@ public class UDAF {
                 return buffer.getInt(0);
             }
         });
+
         sqlContext.sql("select name, StringCount(name) as strCount from user1 group by name").show();
     }
 }
